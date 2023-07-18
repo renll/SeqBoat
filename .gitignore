@@ -9,7 +9,6 @@ data-bin/
 # C extensions
 *.so
 *.pt
-*.png
 final_checkpoints/
 out.txt
 out1.txt
