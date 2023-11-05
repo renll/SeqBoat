@@ -600,11 +600,10 @@ def slag_lm_adaptive_big_enwik8(args):
 
 @register_model_architecture('slag_lm', 'slag_lm_enwik8_base_v2')
 def slag_lm_adaptive_big_enwik8(args):
-    rate=1.2
     args.decoder_layers = getattr(args, 'decoder_layers', 14)
-    args.decoder_embed_dim = getattr(args, "decoder_embed_dim", int(512*rate))
-    args.decoder_hidden_dim = getattr(args, "decoder_hidden_dim", int(1024*rate))
-    args.decoder_ffn_embed_dim = getattr(args, "decoder_ffn_embed_dim", int(1024*rate))
+    args.decoder_embed_dim = getattr(args, "decoder_embed_dim", 616)
+    args.decoder_hidden_dim = getattr(args, "decoder_hidden_dim", 1232)
+    args.decoder_ffn_embed_dim = getattr(args, "decoder_ffn_embed_dim", 1232)
     args.decoder_z_dim = getattr(args, 'decoder_z_dim', 128)
     args.decoder_n_dim = getattr(args, 'decoder_n_dim', 16)
     args.dropout = getattr(args, 'dropout', 0.1)

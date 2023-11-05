@@ -26,14 +26,16 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2306.11197-brightgreen.svg?style=flat-square)](https://arxiv.org/abs/2306.11197)  [![arXiv](https://img.shields.io/badge/slides-blue.svg?style=flat-square)](https://drive.google.com/file/d/1HrBSA5fnw8olx2pbNVJ8JVw3Hxh4fQKE/view?usp=sharing) 
 
 ## Introduction
-This is the PyTorch implementation of SeqBoat :speedboat: :speedboat: :speedboat: proposed in our paper. This repository is based on [MEGA](https://github.com/facebookresearch/mega) and the [fairseq package v0.9.0](https://github.com/pytorch/fairseq/tree/v0.9.0).
+This is the PyTorch implementation of SeqBoat :speedboat: proposed in our paper. This repository is based on [MEGA](https://github.com/facebookresearch/mega) and the [fairseq package v0.9.0](https://github.com/pytorch/fairseq/tree/v0.9.0).
 
 <p align="center">
  <img src="docs/arch.png" width="700"/>
 </p>
 
 ## Updates
-1. [July 18th] Released training scripts for LRA and Speech Commands.
+- [Nov. 5] Released training scripts for enwik8.
+- [Sep. 21st] Our paper is accepted by NeurIPS 2023!
+- [July 18th] Released training scripts for LRA and Speech Commands.
 
 ## Code Overview
 1. The *compress* and *extract* operators for Sparse Modular Activation (SMA) are implemented in [fairseq/modules/seqboat_utils.py](fairseq/modules/seqboat_utils.py) with the functions `compress_seq` and `extract` respectively.
@@ -53,7 +55,7 @@ For faster training, install NVIDIA's apex library following [fairseq](https://g
 
 - [Long Range Arena](examples/seqboat/README.lra.md)
 - [Speech Classification](examples/seqboat/README.sc.md)
-- [Language Modeling](examples/seqboat/README.lm.md) (coming soon)
+- [Language Modeling](examples/seqboat/README.lm.md)
 
 We also provide the training and testing scripts for each of the tasks in the `experiment` directory.
 
@@ -62,11 +64,12 @@ We also provide the training and testing scripts for each of the tasks in the `e
 If you find our work useful, please consider citing:
 
 ```bibtex
-@article{ren2023sparse,
-  title   = {Sparse Modular Activation for Efficient Sequence Modeling},
-  author  = {Liliang Ren and Yang Liu and Shuohang Wang and Yichong Xu and Chenguang Zhu and ChengXiang Zhai},
-  year    = {2023},
-  journal = {arXiv preprint arXiv: 2306.11197}
+@inproceedings{ren2023sparse,
+  title={Sparse Modular Activation for Efficient Sequence Modeling},
+  author={Liliang Ren and Yang Liu and Shuohang Wang and Yichong Xu and Chenguang Zhu and ChengXiang Zhai},
+  booktitle={Thirty-seventh Conference on Neural Information Processing Systems},
+  year={2023},
+  url={https://openreview.net/forum?id=TfbzX6I14i}
 }
 ```
 

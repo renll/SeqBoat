@@ -650,7 +650,8 @@ class SeqBoatUnit(nn.Module):
         h = self.element_attention(q, k, v, padding_mask, attn_mask, tick, compress, seq_len)
 
         h = self.h_proj(h*r)
-        h = self.dropout(h)
+        if attn_mask is None:
+            h = self.dropout(h)
 
         if self.latent_conf:
             if compress:
@@ -665,7 +666,11 @@ class SeqBoatUnit(nn.Module):
             hx = hx[-slen:,:,:]
             h = h[-slen:,:,:]
             
-        out = hx + h + residual
+        if attn_mask is None:
+            out = hx + h + residual
+        else:
+            out = self.dropout(hx + h) + residual
+            
         out = self.activation(out)
 
         if not self.prenorm:
