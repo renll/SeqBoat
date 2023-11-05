@@ -34,8 +34,8 @@ This is the PyTorch implementation of SeqBoat :speedboat: proposed in our paper.
 
 ## Updates
 - [Nov. 5] Released training scripts for enwik8.
-- [Sep. 21st] Our paper is accepted by NeurIPS 2023!
-- [July 18th] Released training scripts for LRA and Speech Commands.
+- [Sep. 21] Our paper is accepted by NeurIPS 2023!
+- [July 18] Released training scripts for LRA and Speech Commands.
 
 ## Code Overview
 1. The *compress* and *extract* operators for Sparse Modular Activation (SMA) are implemented in [fairseq/modules/seqboat_utils.py](fairseq/modules/seqboat_utils.py) with the functions `compress_seq` and `extract` respectively.
