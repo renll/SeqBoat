@@ -33,7 +33,7 @@ This is the PyTorch implementation of SeqBoat :speedboat: proposed in our paper.
 </p>
 
 ## Updates
-- [Nov. 5] Released training scripts for enwik8.
+- [Nov. 5] Released training scripts for enwik8 and added a standalone implementation of the SeqBoat layer [here](standalone_seqboat.py)!
 - [Sep. 21] Our paper is accepted by NeurIPS 2023!
 - [July 18] Released training scripts for LRA and Speech Commands.
 
