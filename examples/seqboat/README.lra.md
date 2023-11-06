@@ -122,7 +122,7 @@ model=slag_lra_pf128_base
 python -u train.py ${DATA} \
     --seed $seed --ddp-backend c10d --find-unused-parameters \
     -a ${model} --task lra-image --input-type image --pixel-normalization 0.5 0.5 \
-    --encoder-layers 4 --n-dim 16 --chunk-size ${CHUNK} \
+    --encoder-layers 6 --n-dim 16 --chunk-size ${CHUNK} \
     --activation-fn 'silu' --attention-activation-fn 'relu2' \
     --norm-type 'syncbatchnorm' --sen-rep-type 'mp' --encoder-normalize-before \
     --criterion lra_cross_entropy --best-checkpoint-metric accuracy --maximize-best-checkpoint-metric \
