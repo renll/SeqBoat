@@ -33,7 +33,7 @@ def compress_seq(q,index_q, max_sl, dim = -2):
         new_q = eval_index(new_q,dim)
     else:
         new_q = 0*new_q
-    return new_q
+    return new_q.type(q.dtype)
 
 def extract(h, index_q):
     h = F.pad(h, (0,0,1,0))
