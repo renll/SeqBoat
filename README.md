@@ -33,6 +33,7 @@ This is the PyTorch implementation of SeqBoat :speedboat: proposed in our paper.
 </p>
 
 ## Updates
+- [Nov. 26] Added a standalone CIFAR-10 training [script](standalone_cifar.py) of SeqBoat for quickstart!
 - [Nov. 5] Released training scripts for enwik8 and added a standalone implementation of SeqBoat [here](standalone_seqboat.py)!
 - [Sep. 21] Our paper is accepted by NeurIPS 2023!
 - [July 18] Released training scripts for LRA and Speech Commands.
@@ -50,6 +51,13 @@ This repository requires Python 3.8+ and Pytorch 1.11+.
 pip install -e .
 ```
 For faster training, install NVIDIA's apex library following [fairseq](https://github.com/facebookresearch/fairseq#requirements-and-installation).
+
+## Quickstart
+The easiest way to get started is to run the standalone_cifar.py script. This script trains a simple SeqBoat model on CIFAR-10:
+
+'''bash
+python standalone_cifar.py --prenorm
+'''
 
 ## Experiments
 
