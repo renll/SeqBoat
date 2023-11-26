@@ -138,6 +138,7 @@ setup(
         'cython',
         'editdistance',
         'numpy==1.23.4',
+        'torchvision',
         'einops',
         'regex',
         'opt-einsum',

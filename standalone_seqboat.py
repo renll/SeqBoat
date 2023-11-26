@@ -421,7 +421,7 @@ class SeqBoatLayer(nn.Module):
         self.activation = F.silu
         self.attention_activation = attention_activation
         self.truncation = truncation
-        
+        self.causal = not bidirectional
         self.dropout = nn.Dropout(dropout)
         self.hidden_dropout = nn.Dropout(hidden_dropout)
         self.attention_dropout = nn.Dropout(attention_dropout)
@@ -604,11 +604,11 @@ class SeqBoatLayer(nn.Module):
 
 
 
-    def element_attention(self, q, k, v, padding_mask, attn_mask, tick,compress, seq_len):
+    def element_attention(self, q, k, v, padding_mask, tick,compress, seq_len):
         # padding_mask: b,c
         
         slen = k.size(-2)
-        causal = attn_mask is not None
+        causal = self.causal
 
         if self.local_pos:
             bias = None
@@ -646,7 +646,7 @@ class SeqBoatLayer(nn.Module):
             # q: b c h
             # tick: b c 
             q =q / lengths
-            
+
         h = self.local_attention(q, k, v, bias, ~padding_mask, causal) 
 
         return h
@@ -656,7 +656,6 @@ class SeqBoatLayer(nn.Module):
         self,
         x,
         padding_mask = None,
-        attn_mask = None,
     ):
         """Input shape: Time x Batch x Channel
 
@@ -664,9 +663,6 @@ class SeqBoatLayer(nn.Module):
             padding_mask (ByteTensor, optional): mask to exclude
                 keys that are pads, of shape `(batch, src_len)`, where
                 padding elements are indicated by 1s.
-            attn_mask (ByteTensor, optional): typically used to
-                implement causal attention, where the mask prevents the
-                attention from looking forward in time (default: None).
         """
 
         seq_len, bsz, embed_dim = x.size()
@@ -721,17 +717,10 @@ class SeqBoatLayer(nn.Module):
 
             pad_mask = compress_seq(mask_q,index_q.expand(-1,-1,1), max_sl ,dim = -2) # B x C x 1  
             padding_mask = ~pad_mask.squeeze(-1)
-            
-            if attn_mask is not None:
-                assert len(attn_mask.shape) == 2
-                if max_sl==0:
-                    attn_mask = attn_mask[:1, :1]
-                else:
-                    attn_mask = attn_mask[:max_sl, :max_sl]
         else:
             
             padding_mask = ~mask_q.squeeze(-1)
-
+        
         if self.rel_pos_type == 'simple' and not self.local_pos:
             tick = tick.squeeze(-1)   
         # B x L x E
@@ -742,10 +731,10 @@ class SeqBoatLayer(nn.Module):
         # B x L x 2 x S -> B x L x S
         q, k = torch.unbind(z, dim=-2)
         v = self.hidden_dropout(v)
-        h = self.element_attention(q, k, v, padding_mask, attn_mask, tick, compress, seq_len)
+        h = self.element_attention(q, k, v, padding_mask, tick, compress, seq_len)
 
         h = self.h_proj(h*r)
-        if attn_mask is None:
+        if not self.causal:
             h = self.dropout(h)
 
         if compress:
@@ -755,7 +744,7 @@ class SeqBoatLayer(nn.Module):
         h = h.view(bsz, -1, self.embed_dim).transpose(0, 1)
         hx = hx.view(bsz, -1, self.embed_dim).transpose(0, 1)
             
-        if attn_mask is None:
+        if not self.causal:
             out = hx + h + residual
         else:
             out = self.dropout(hx + h) + residual
@@ -766,13 +755,91 @@ class SeqBoatLayer(nn.Module):
              
         return out
 
+class SeqBoatModel(nn.Module):
+
+    def __init__(
+        self,
+        d_input,
+        d_output=10,
+        d_model=512,
+        n_layers=6,
+        dropout=0.1,
+        prenorm=False,
+        max_positions = 1024,
+        d_qk = 96,
+        d_ema = 16,
+        mem_size = 128,
+        bidirectional=True,  
+        init_temp_scale=1.0,
+        norm_type = 'batchnorm',  
+        rel_pos_bias='simple', 
+        attention_activation='relu2',
+    ):
+        super().__init__()
+
+        self.prenorm = prenorm
+
+        # Linear encoder (d_input = 1 for grayscale and 3 for RGB)
+        self.encoder = nn.Linear(d_input, d_model)
+        
+        self.seq_layers = nn.ModuleList()
+        for _ in range(n_layers):
+            self.seq_layers.append(
+                SeqBoatLayer(d_model,d_qk,d_model*2,d_ema,
+                                bidirectional=bidirectional,window_size=mem_size, 
+                                prenorm=prenorm,dropout=dropout,norm_type=norm_type,
+                                init_temp_scale=init_temp_scale, max_positions=max_positions,
+                                rel_pos_bias=rel_pos_bias, 
+                                attention_activation=attention_activation,
+                            )
+            )
+
+        # Linear decoder
+        self.decoder = nn.Linear(d_model, d_output)
+
+        if prenorm:
+            self.final_norm = SequenceNorm(norm_type, d_model)
+        else:
+            self.final_norm = None
+        self.reset_parameters()
+
+
+    def reset_parameters(self):
+        std = 0.02
+        Normal(self.encoder.weight, mean=0.0, std=std)
+        nn.init.constant_(self.encoder.bias, 0.0)
+        Normal(self.decoder.weight, mean=0.0, std=std)
+        nn.init.constant_(self.decoder.bias, 0.0)
+        
+    def forward(self, x):
+        """
+        Input x is shape (B, L, d_input)
+        """
+        x = self.encoder(x)  # (B, L, d_input) -> (B, L, d_model)
+
+        x = x.transpose(0, 1)  # (B, L, d_model) -> (L, B, d_model)
+        for layer in self.seq_layers:
+            x = layer(x)
+        if self.final_norm is not None:
+            x = self.final_norm(x)
+        x = x.transpose(0, 1)
+
+        # Pooling: average pooling over the sequence length
+        x = x.mean(dim=1)
+
+        # Decode the outputs
+        x = self.decoder(x)  # (B, d_model) -> (B, d_output)
+
+        return x
 
 
 if __name__=="__main__":
     torch.manual_seed(1)
     
     layer1 = SeqBoatLayer(128,128,256,16,bidirectional=True,window_size=256, norm_type='batchnorm', max_positions=4096, truncation=4096)
-
+    m1 = SeqBoatModel(128,max_positions=4096)
     x = torch.rand(4096,22,128)
+    
     print(layer1(x))
+    print(m1(x))
     

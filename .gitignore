@@ -2,6 +2,8 @@
 __pycache__/
 *.out
 wandb/
+data/
+checkpoint/
 *.py[cod]
 *$py.class
 examples/mega/wmt16ende
