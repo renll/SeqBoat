@@ -55,9 +55,9 @@ For faster training, install NVIDIA's apex library following [fairseq](https://g
 ## Quickstart
 The easiest way to get started is to run the standalone_cifar.py script. This script trains a simple SeqBoat model on CIFAR-10:
 
-'''bash
+```bash
 python standalone_cifar.py --prenorm
-'''
+```
 
 ## Experiments
 
