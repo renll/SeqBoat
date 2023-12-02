@@ -23,7 +23,7 @@
   <span class="author-block"><sup>*</sup> Work done at Microsoft internship and UIUC. </span>
 </div>
 
-[![arXiv](https://img.shields.io/badge/arXiv-2306.11197-brightgreen.svg?style=flat-square)](https://arxiv.org/abs/2306.11197)  [![arXiv](https://img.shields.io/badge/slides-blue.svg?style=flat-square)](https://docs.google.com/presentation/d/1a-P_aWkjEDHPWW65ODy5nVrDfiqRjTYi_OgwhAwJO3o/edit?usp=sharing) 
+[![arXiv](https://img.shields.io/badge/arXiv-2306.11197-brightgreen.svg?style=flat-square)](https://arxiv.org/abs/2306.11197)  [![arXiv](https://img.shields.io/badge/slides-blue.svg?style=flat-square)](https://docs.google.com/presentation/d/1a-P_aWkjEDHPWW65ODy5nVrDfiqRjTYi_OgwhAwJO3o/edit?usp=sharing) [![arXiv](https://img.shields.io/badge/poster-orange.svg?style=flat-square)](https://drive.google.com/file/d/1GIrmReqLkc7AyegKXV-C4ns0jy2b-6xd/view?usp=sharing) 
 
 ## Introduction
 This is the PyTorch implementation of SeqBoat :speedboat: proposed in our paper. This repository is based on [MEGA](https://github.com/facebookresearch/mega) and the [fairseq package v0.9.0](https://github.com/pytorch/fairseq/tree/v0.9.0).
