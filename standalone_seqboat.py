@@ -705,7 +705,7 @@ class SeqBoatLayer(nn.Module):
         q_probs = (q_p * mask_q)
         max_sl = mask_q.sum(-2).max()
         density = max_sl/mask_q.shape[-2]
-        compress = density < self.density_threshold
+        compress = density < self.density_threshold # Set compress to be always true if you meet NCCL timeout problem during distributed training
         
         index_q = None
         if compress:
